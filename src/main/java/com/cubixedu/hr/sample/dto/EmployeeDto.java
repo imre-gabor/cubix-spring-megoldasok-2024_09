@@ -10,7 +10,6 @@ public class EmployeeDto {
 	private LocalDateTime entryDate;
 
 	public EmployeeDto() {
-
 	}
 
 	public EmployeeDto(long id, String name, String title, int salary, LocalDateTime entryDate) {

@@ -9,6 +9,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.cubixedu.hr.sample.config.HrConfigProperties;
+import com.cubixedu.hr.sample.config.HrConfigProperties.Limit;
 import com.cubixedu.hr.sample.config.HrConfigProperties.Smart;
 import com.cubixedu.hr.sample.model.Employee;
 import com.cubixedu.hr.sample.service.SalaryService;
@@ -31,8 +32,9 @@ public class HrApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		Smart smartConfig = config.getSalary().getSmart();
 		for (Double limit : 
+				smartConfig.getLimitObjs().stream().map(Limit::getYear).toList()
 				/*smartConfig.getLimits().keySet()*/
-			Arrays.asList(smartConfig.getLimit1(), smartConfig.getLimit2(), smartConfig.getLimit3())) {
+			/*Arrays.asList(smartConfig.getLimit1(), smartConfig.getLimit2(), smartConfig.getLimit3())*/) {
 			
 			int origSalary = 100;
 			LocalDateTime limitDay = LocalDateTime.now().minusDays((long)(limit*365));

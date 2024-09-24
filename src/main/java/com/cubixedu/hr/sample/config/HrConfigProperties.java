@@ -1,5 +1,6 @@
 package com.cubixedu.hr.sample.config;
 
+import java.util.List;
 import java.util.TreeMap;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -54,6 +55,25 @@ public class HrConfigProperties {
 		}
 	}
 
+	
+	public static class Limit {
+		private Double year;
+		private int percent;
+		
+		public Double getYear() {
+			return year;
+		}
+		public void setYear(Double year) {
+			this.year = year;
+		}
+		public int getPercent() {
+			return percent;
+		}
+		public void setPercent(int percent) {
+			this.percent = percent;
+		}
+	}
+	
 	public static class Smart {
 		
 		private Double limit1;
@@ -65,6 +85,8 @@ public class HrConfigProperties {
 		
 		
 		private TreeMap<Double, Integer> limits;
+		
+		private List<Limit> limitObjs;
 		
 		public Double getLimit1() {
 			return limit1;
@@ -120,6 +142,14 @@ public class HrConfigProperties {
 
 		public void setLimits(TreeMap<Double, Integer> limits) {
 			this.limits = limits;
+		}
+
+		public List<Limit> getLimitObjs() {
+			return limitObjs;
+		}
+
+		public void setLimitObjs(List<Limit> limitObjs) {
+			this.limitObjs = limitObjs;
 		}
 
 	}
