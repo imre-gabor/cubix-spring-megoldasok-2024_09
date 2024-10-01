@@ -3,18 +3,24 @@ package com.cubixedu.hr.sample.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.cubixedu.hr.sample.dto.Views.BaseData;
+import com.fasterxml.jackson.annotation.JsonView;
+
 
 public class CompanyDto {
 	
+	@JsonView(BaseData.class)
 	private Long id;
+	@JsonView(BaseData.class)
 	private int registrationNumber;
+	@JsonView(BaseData.class)
 	private String name;
+	@JsonView(BaseData.class)
 	private String address;
 	
 	private List<EmployeeDto> employees = new ArrayList<>();
 	
 	public CompanyDto() {
-		
 	}
 
 	public CompanyDto(Long id, int registrationNumber, String name, String adress, List<EmployeeDto> employees) {
