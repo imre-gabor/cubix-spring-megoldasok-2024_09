@@ -1,11 +1,13 @@
 package com.cubixedu.hr.sample.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
 @Entity
@@ -20,6 +22,9 @@ public class Company {
 	
 	@OneToMany(mappedBy = "company")
 	private List<Employee> employees;
+	
+	@ManyToOne
+	private CompanyType companyType;
 	
 	public Company() {
 	}
@@ -90,6 +95,9 @@ public class Company {
 	}
 	
 	public void addEmployee(Employee employee) {
+		if(this.employees == null) {
+			this.employees = new ArrayList<>();
+		}
 		this.employees.add(employee);
 		employee.setCompany(this);
 	}
@@ -97,6 +105,14 @@ public class Company {
 	public void removeEmployee(Employee employee) {
 		employee.setCompany(null);
 		this.getEmployees().remove(employee);
+	}
+
+	public CompanyType getCompanyType() {
+		return companyType;
+	}
+
+	public void setCompanyType(CompanyType companyType) {
+		this.companyType = companyType;
 	}
 	
 

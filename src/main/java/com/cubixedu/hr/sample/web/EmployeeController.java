@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.SortDefault;
+import org.springframework.data.web.SortDefault.SortDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +26,7 @@ import com.cubixedu.hr.sample.mapper.EmployeeMapper;
 import com.cubixedu.hr.sample.model.Employee;
 import com.cubixedu.hr.sample.repository.EmployeeRepository;
 import com.cubixedu.hr.sample.service.EmployeeService;
+import com.cubixedu.hr.sample.service.SalaryService;
 
 import jakarta.validation.Valid;
 
@@ -38,6 +43,7 @@ public class EmployeeController {
 	@Autowired
 	private EmployeeRepository employeeRepository;
 	
+	
 //	@GetMapping
 //	public List<EmployeeDto> findAll(){
 //		return new ArrayList<>(employees.values());
@@ -53,10 +59,17 @@ public class EmployeeController {
 	
 	//2. megoldás
 	@GetMapping
-	public List<EmployeeDto> findAll(@RequestParam Optional<Integer> minSalary){
+	public List<EmployeeDto> findAll(@RequestParam Optional<Integer> minSalary, @SortDefault("employeeId") Pageable pageable){
 		List<Employee> employees = null;
 		if (minSalary.isPresent()) {
-			employees = employeeRepository.findBySalaryGreaterThan(minSalary.get());
+			Page<Employee> page = employeeRepository.findBySalaryGreaterThan(minSalary.get(), pageable);
+			System.out.println(page.getTotalElements());
+			System.out.println(page.isFirst());
+			System.out.println(page.isLast());
+			System.out.println(page.hasPrevious());
+			System.out.println(page.hasNext());
+			
+			employees = page.getContent();
 		} else {
 			employees = employeeService.findAll();
 		}
