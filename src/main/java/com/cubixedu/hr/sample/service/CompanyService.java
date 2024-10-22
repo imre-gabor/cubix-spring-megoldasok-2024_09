@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cubixedu.hr.sample.model.Company;
 import com.cubixedu.hr.sample.model.Employee;
@@ -59,6 +60,7 @@ public class CompanyService {
 		return company;
 	}
 	
+	@Transactional
 	public Company replaceEmployees(long id, List<Employee> employees) {
 		Company company = companyRepository.findById(id).get();
 		company.getEmployees().forEach(e -> e.setCompany(null));
