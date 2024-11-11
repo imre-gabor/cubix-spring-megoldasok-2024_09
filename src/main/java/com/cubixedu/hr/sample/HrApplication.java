@@ -34,7 +34,7 @@ public class HrApplication implements CommandLineRunner {
 	
 	@Override
 	public void run(String... args) throws Exception {
-		initDbService.initDb();
+
 		Smart smartConfig = config.getSalary().getSmart();
 		for (Double limit : 
 				smartConfig.getLimitObjs().stream().map(Limit::getYear).toList()
@@ -52,7 +52,9 @@ public class HrApplication implements CommandLineRunner {
 			System.out.format("1 nappal a %.2f éves határ előtt az új fizetés %d%n", limit, e1.getSalary());
 			System.out.format("1 nappal a %.2f éves határ után az új fizetés %d%n", limit, e2.getSalary());
 		}
-		
+		initDbService.clearDb();
+
+		initDbService.initDb();
 	}
 
 

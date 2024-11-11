@@ -1,12 +1,15 @@
 package com.cubixedu.hr.sample.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Employee {
@@ -23,6 +26,11 @@ public class Employee {
 	
 	@ManyToOne
 	private Position position;
+	@OneToMany(mappedBy = "employee")
+	private List<HolidayRequest> holidayRequests;
+
+	@ManyToOne
+	private Employee manager;
 	
 	public Employee() {
 	}
@@ -102,6 +110,29 @@ public class Employee {
 
 	public void setPosition(Position position) {
 		this.position = position;
+	}
+	public List<HolidayRequest> getHolidayRequests() {
+		return holidayRequests;
+	}
+
+	public void setHolidayRequests(List<HolidayRequest> holidayRequests) {
+		this.holidayRequests = holidayRequests;
+	}
+
+	public void addHolidayRequest(HolidayRequest holidayRequest) {
+		if (this.holidayRequests == null)
+			this.holidayRequests = new ArrayList<>();
+
+		this.holidayRequests.add(holidayRequest);
+		holidayRequest.setEmployee(this);
+	}
+
+	public Employee getManager() {
+		return manager;
+	}
+
+	public void setManager(Employee manager) {
+		this.manager = manager;
 	}
 
 }
