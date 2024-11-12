@@ -2,6 +2,7 @@ package com.cubixedu.hr.sample.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>, JpaSp
 	List<Employee> findByNameStartingWithIgnoreCase(String name);
 	List<Employee> findByDateOfStartWorkBetween(LocalDateTime from, LocalDateTime until);
 
+	Optional<Employee> findByUsername(String username);
 	
 	@Query("UPDATE Employee e "
 			+ "SET e.salary = :minSalary "

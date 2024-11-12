@@ -20,12 +20,14 @@ public class CompanyService {
 	@Autowired
 	EmployeeService employeeService;
 
+	@Transactional
 	public Company save(Company company) {
 		if(!(company.getId() == null || company.getId() == 0))
 			throw new IllegalArgumentException();
 		return companyRepository.save(company);
 	}
 
+	@Transactional
 	public Company update(Company company) {
 		if(!companyRepository.existsById(company.getId())) {
 			return null;
@@ -33,25 +35,28 @@ public class CompanyService {
 		return companyRepository.save(company);
 	}
 
-	public List<Company> findAll() {
-		return companyRepository.findAll();
+	public List<Company> findAll(boolean isFull) {
+		
+		return isFull ? companyRepository.findAllWithEmployees() : companyRepository.findAll();
 	}
 
-	public Optional<Company> findById(long id) {
-		return companyRepository.findById(id);
+	public Optional<Company> findById(long id, boolean isFull) {
+		return isFull ? companyRepository.findByIdWithEmployees(id) : companyRepository.findById(id);
 	}
 
+	@Transactional
 	public void delete(long id) {
 		companyRepository.deleteById(id);
 	}
 	
+	@Transactional
 	public Company addEmployee(long id, Employee employee) {
-		Company company = companyRepository.findById(id).get();
-		company.addEmployee(employee);
-		employeeService.save(employee);
+		Company company = companyRepository.findByIdWithEmployees(id).get();
+		company.addEmployee(employeeService.save(employee));		
 		return company;
 	}
 	
+	@Transactional
 	public Company deleteEmployee(long id, long employeeId) {
 		Company company = companyRepository.findById(id).get();
 		Employee employee = employeeService.findById(employeeId).get();
@@ -66,8 +71,7 @@ public class CompanyService {
 		company.getEmployees().forEach(e -> e.setCompany(null));
 		company.getEmployees().clear();
 		employees.forEach(e -> {
-			company.addEmployee(e);
-			employeeService.save(e);
+			company.addEmployee(employeeService.save(e));
 		});
 		return company;
 	}

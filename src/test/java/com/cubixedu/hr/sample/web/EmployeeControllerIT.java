@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -17,6 +18,7 @@ import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec;
 import com.cubixedu.hr.sample.dto.EmployeeDto;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestDatabase
 public class EmployeeControllerIT {
 
 	private static final String BASE_URI = "/api/employees";
@@ -108,6 +110,7 @@ public class EmployeeControllerIT {
 		return webTestClient
 				.put()
 				.uri(path)
+				.headers(headers -> headers.setBasicAuth("user1", "pass"))
 				.bodyValue(newEmployee)
 				.exchange();
 	}
@@ -116,6 +119,7 @@ public class EmployeeControllerIT {
 		return webTestClient
 				.post()
 				.uri(BASE_URI)
+				.headers(headers -> headers.setBasicAuth("user1", "pass"))
 				.bodyValue(newEmployee)
 				.exchange();
 	}
@@ -124,6 +128,7 @@ public class EmployeeControllerIT {
 		List<EmployeeDto> responseList = webTestClient
 				.get()
 				.uri(BASE_URI)
+				.headers(headers -> headers.setBasicAuth("user1", "pass"))
 				.exchange()
 				.expectStatus()
 				.isOk()

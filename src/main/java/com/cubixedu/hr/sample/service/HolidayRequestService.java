@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -17,6 +19,7 @@ import com.cubixedu.hr.sample.dto.HolidayRequestFilterDto;
 import com.cubixedu.hr.sample.model.Employee;
 import com.cubixedu.hr.sample.model.HolidayRequest;
 import com.cubixedu.hr.sample.repository.HolidayRequestRepository;
+import com.cubixedu.hr.sample.security.HrUser;
 
 
 @Service
@@ -71,9 +74,13 @@ public class HolidayRequestService {
 	}
 
 	@Transactional
-	public HolidayRequest approveHolidayRequest(long id, long approverId, boolean status) {
+	public HolidayRequest approveHolidayRequest(long id, boolean status) {
 		HolidayRequest holidayRequest = holidayRequestRepository.findById(id).get();
-		holidayRequest.setApprover(employeeService.findById(approverId).get());
+		Employee approver = getCurrentHrUser().getEmployee();
+		if(!holidayRequest.getEmployee().getManager().equals(approver))
+			throw new AccessDeniedException("Only manager of employee can approve his/her requests");
+		
+		holidayRequest.setApprover(approver);
 		holidayRequest.setApproved(status);
 		holidayRequest.setApprovedAt(LocalDateTime.now());
 		return holidayRequest;
@@ -95,8 +102,15 @@ public class HolidayRequestService {
 		HolidayRequest holidayRequest = holidayRequestRepository.findById(id).get();
 		if (holidayRequest.getApproved() != null)
 			throw new IllegalArgumentException();
+		if(!holidayRequest.getEmployee().equals(getCurrentHrUser().getEmployee()))
+			throw new AccessDeniedException("Cannot delete request of other user.");
+		
 		holidayRequest.getEmployee().getHolidayRequests().remove(holidayRequest);
 		holidayRequestRepository.deleteById(id);
+	}
+	
+	private HrUser getCurrentHrUser() {
+		return (HrUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
 
 }
