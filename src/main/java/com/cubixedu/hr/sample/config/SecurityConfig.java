@@ -1,5 +1,6 @@
 package com.cubixedu.hr.sample.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,6 +14,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.cubixedu.hr.sample.security.JwtAuthFilter;
 
 
 @Configuration
@@ -20,8 +24,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 	
-//	@Autowired
-//	private JwtAuthFilter jwtAuthFilter;
+	@Autowired
+	private JwtAuthFilter jwtAuthFilter;
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -33,7 +37,7 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
 		return http
 				.httpBasic(
-					Customizer.withDefaults()
+					basic -> basic.disable()
 				)
 				.csrf(csrf ->
 					csrf.disable()
@@ -43,19 +47,20 @@ public class SecurityConfig {
 				)
 				.authorizeHttpRequests(auth ->
 					auth
-					//.requestMatchers(HttpMethod.POST, "/api/login").permitAll()
+					.requestMatchers(HttpMethod.POST, "/api/login").permitAll()
+					.requestMatchers("/error").permitAll()
 					.requestMatchers(HttpMethod.POST, "/api/holidayrequests/**").authenticated()					
 					.requestMatchers(HttpMethod.PUT, "/api/holidayrequests/**").authenticated()					
 					.requestMatchers(HttpMethod.DELETE, "/api/holidayrequests/**").authenticated()					
 					.anyRequest().authenticated()
 				)
-//				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
 				.build();
 		
 	}
 	
-//	@Bean
-//	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-//		return authenticationConfiguration.getAuthenticationManager();
-//	}
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+		return authenticationConfiguration.getAuthenticationManager();
+	}
 }
